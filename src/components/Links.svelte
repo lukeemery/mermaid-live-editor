@@ -2,6 +2,7 @@
   import { Base64 } from 'js-base64';
   import moment from 'moment';
   import { codeStore } from '../code-store.js';
+  import config from 'config';
 
   const getBase64SVG = () => {
     const container = document.getElementById('container');
@@ -103,11 +104,13 @@
   let userimagewidth = 1920;
   let userimageheight = 1080;
 
+  let renderUrl = config.renderUrl;
+
   const unsubscribe = codeStore.subscribe((state) => {
     b64Code = Base64.encodeURI(JSON.stringify(state));
     url = `${window.location.pathname.split('#')[0]}#/view/${b64Code}`;
-    iUrl = `https://mermaid.ink/img/${b64Code}`;
-    svgUrl = `https://mermaid.ink/svg/${b64Code}`;
+    iUrl = `${renderUrl}/img/${b64Code}`;
+    svgUrl = `${renderUrl}/svg/${b64Code}`;
     mdCode = `[![](${iUrl})](${window.location.protocol}//${window.location.host}${window.location.pathname}#/edit/${b64Code})`;
   });
 </script>

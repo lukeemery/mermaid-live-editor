@@ -83,5 +83,4 @@
 
 <div id="editor-container">
   <div id="editor" use:watchResize={resizeHandler} />
-  <Error errorStore={codeErrorStore} />
 </div>

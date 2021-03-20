@@ -1,0 +1,23 @@
+# Two-stage  docker container for mermaid-js/mermaid-live-editor
+# Build              : docker build -t mermaid-js/mermaid-live-editor .
+# Run                : docker run --name mermaid-live-editor --publish 8080:80 mermaid-js/mermaid-live-editor
+# Start              : docker start mermaid-live-editor
+# Use webbrowser     : http://localhost:8080
+# Stop               : press ctrl + c 
+#                                     or 
+#                                        docker stop mermaid-live-editor
+
+
+FROM node:14.5.0-alpine as mermaid-live-editor-dev
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+
+COPY --chown=node:node package.json yarn.lock /usr/src/app/
+COPY --chown=node:node . /usr/src/app
+RUN yarn install
+
+CMD ["yarn", "dev:docker"]
+
+EXPOSE 8080

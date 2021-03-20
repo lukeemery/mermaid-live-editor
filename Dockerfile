@@ -8,11 +8,20 @@
 #                                        docker stop mermaid-live-editor
 
 
-FROM node:13.6.0-alpine as mermaid-live-editor-builder
+FROM node:14.5.0-alpine as mermaid-live-editor-builder
 COPY --chown=node:node . /home
 WORKDIR /home
 RUN yarn install
 RUN yarn build
 
 FROM nginx:alpine as mermaid-live-editor-runner
-COPY --from=mermaid-live-editor-builder --chown=nginx:nginx /home/docs /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+RUN apk add --no-cache gettext
+RUN sed -i "s/events/load_module modules\/ngx_http_js_module.so;\nevents/" /etc/nginx/nginx.conf
+COPY nginx-entrypoint.sh /
+
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./config.js /etc/nginx/config.js
+COPY --from=mermaid-live-editor-builder --chown=nginx:nginx /home/docs ./
+
+ENTRYPOINT [ "sh", "/nginx-entrypoint.sh" ]
